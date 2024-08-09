@@ -1,0 +1,5 @@
+flask
+Flask-BasicAuth
+piny
+psycopg2-binary
+requests
