@@ -6,7 +6,7 @@ long_description = (this_directory / "README.md").read_text()
 
 setup(
     name='pgrestpy',
-    version='0.0.1',
+    version='0.0.2',
     description='Simple REST client for PostgreSQL-compatible databases',
     long_description=long_description,
     long_description_content_type='text/markdown',
@@ -18,7 +18,7 @@ setup(
     install_requires=['flask',
                       'Flask-BasicAuth',
                       'piny',
-                      'psycogpg2-binary',
+                      'psycopg2-binary',
                       'requests'
                       ],
     classifiers=[
@@ -29,4 +29,3 @@ setup(
         'Topic :: Software Development :: Libraries :: Python Modules'
     ]
 )
-
