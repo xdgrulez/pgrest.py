@@ -1,0 +1,3 @@
+url: ${PGRESTPY_SANDBOX_URL}
+username: ${PGRESTPY_USERNAME}
+password: ${PGRESTPY_PASSWORD}
