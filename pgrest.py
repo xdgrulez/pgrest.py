@@ -42,5 +42,10 @@ def sql():
 
     return output_str
 
+
+def run(port_int):
+    app.run(host="0.0.0.0", port=port_int)
+
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
