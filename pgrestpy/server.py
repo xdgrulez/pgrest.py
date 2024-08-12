@@ -1,11 +1,12 @@
+import json
 import os
 from flask import Flask, request, Response
 from flask_basicauth import BasicAuth
 import psycopg2
 
 app = Flask(__name__)
-app.config["BASIC_AUTH_USERNAME"] = os.environ["PGRESTPY_USERNAME"]
-app.config["BASIC_AUTH_PASSWORD"] = os.environ["PGRESTPY_PASSWORD"]
+app.config["BASIC_AUTH_USERNAME"] = os.environ["PGRESTPY_SANDBOX_USERNAME"]
+app.config["BASIC_AUTH_PASSWORD"] = os.environ["PGRESTPY_SANDBOX_PASSWORD"]
 
 basic_auth = BasicAuth(app)
 
@@ -14,11 +15,23 @@ basic_auth = BasicAuth(app)
 def status():
   return 'pgrest.py is running'
   
+
 @app.route('/sql', methods=["POST"])
 @basic_auth.required
 def sql():
-    dict = request.get_json()
-    sql_str = dict["sql"]
+    def format_column(x):
+        if isinstance(x, dict):
+            return json.dumps(x)
+        else:
+            return str(x)
+    #
+    prefix_str = request.args.get("prefix") if request.args.get("prefix") else ""
+    column_delimiter_str = request.args.get("column_delimiter") if request.args.get("column_delimiter") else ","
+    row_delimiter_str = request.args.get("row_delimiter") if request.args.get("row_delimiter") else "\n"
+    suffix_str = request.args.get("suffix") if request.args.get("suffix") else ""
+    #
+    response_dict = request.get_json()
+    sql_str = response_dict["sql"]
     output_str = ""
     connection = None
     try:
@@ -29,8 +42,8 @@ def sql():
         #
         tuple_list = cursor.fetchall()
         #
-        row_str_list = [",".join([str(x) for x in tuple]) for tuple in tuple_list]
-        output_str = "\n".join(row_str_list)
+        row_str_list = [column_delimiter_str.join([format_column(x) for x in tuple]) for tuple in tuple_list]
+        output_str = f"{prefix_str}{row_delimiter_str.join(row_str_list)}{suffix_str}"
 
     except psycopg2.Error as error:
         print("Error connecting to PostgreSQL", error)
