@@ -20,7 +20,7 @@ def status():
 @basic_auth.required
 def sql():
     def format_column(x):
-        if isinstance(x, dict):
+        if dict_to_json_bool and isinstance(x, dict):
             return json.dumps(x)
         else:
             return str(x)
@@ -29,6 +29,7 @@ def sql():
     column_delimiter_str = request.args.get("column_delimiter") if request.args.get("column_delimiter") else ","
     row_delimiter_str = request.args.get("row_delimiter") if request.args.get("row_delimiter") else "\n"
     suffix_str = request.args.get("suffix") if request.args.get("suffix") else ""
+    dict_to_json_bool = False if request.args.get("dict_to_json") == "false" else True
     #
     response_dict = request.get_json()
     sql_str = response_dict["sql"]
